@@ -1,0 +1,37 @@
+{
+  "name": "mvrk-forms",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "fonts": "node scripts/build-fonts.mjs",
+    "brand": "node scripts/build-brand.mjs",
+    "intro:marks": "node scripts/build-intro-marks.mjs",
+    "intro:check": "node scripts/check-intro-timing.mjs",
+    "check:fonts": "node scripts/check-fonts.mjs",
+    "check": "node scripts/check-fonts.mjs && node scripts/check-intro-timing.mjs && eslint"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "gsap": "^3.15.0",
+    "lenis": "^1.3.25",
+    "next": "16.3.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.0",
+    "sharp": "^0.34.4",
+    "tailwindcss": "^4",
+    "ttf2woff2": "^8.0.0",
+    "typescript": "^5"
+  }
+}

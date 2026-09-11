@@ -1,0 +1,98 @@
+/*
+ * The mask.
+ *
+ * `.slot` is a full-width block and the words are absolutely positioned at
+ * `left: 0`, so `overflow: hidden` only ever clips vertically — the direction
+ * the words travel — and never down the side of a long word.
+ *
+ * THERE IS NO WIDTH TWEEN, and its removal is a fix rather than a
+ * simplification. The slot used to be measured to each word and its width
+ * animated between cached values, which meant a LAYOUT-AFFECTING property
+ * animating every 1.6 seconds, forever, inside the h1. That relaid out the
+ * hero on a loop for the entire time the page was open, and it was the one
+ * permanent source of jank on an otherwise settled page.
+ *
+ * It bought nothing: line 1 and line 2 are separate blocks and both are
+ * left-aligned, so line 2's position never depended on the slot's width in
+ * the first place. The geometry rules the wobble out instead of an animation
+ * papering over it.
+ *
+ * The padding/negative-margin pair stops the mask eating the descenders on
+ * Funky, Fly, Feisty and Freestyle: the padding gives the box room below the
+ * baseline, the negative margin takes that room back out of the layout.
+ */
+
+.line1 {
+  display: block;
+}
+
+.slot {
+  display: block;
+  position: relative;
+  width: 100%;
+  padding-bottom: 0.2em;
+  margin-bottom: -0.2em;
+  overflow: hidden;
+}
+
+/*
+ * THE GRADIENT IS ON THE WORDS, NOT ON AN ANCESTOR, and that is not a style
+ * preference.
+ *
+ * `background-clip: text` clips an element's own background to the glyphs it
+ * paints — but the cycling words are `position: absolute`, so they are painted
+ * out of flow and do not reliably contribute to an ancestor's text clip. Put
+ * the gradient on the h1 or on the line wrapper and the words come out either
+ * fully transparent or flat.
+ *
+ * Each word therefore carries the full rose-to-plum ramp across its own width,
+ * which is also the better read: every word starts rose and ends plum, so the
+ * treatment looks identical whether the word is "Fly" or "Frictionless".
+ *
+ * There was a sheen layer over this — a highlight that swept across each word
+ * as it arrived. Removed: on a 132px headline it read as a gimmick rather than
+ * as craft, and the gradient alone is already what distinguishes this line
+ * from the one below it.
+ *
+ * This is hero-only styling in a component file because this component is
+ * hero-only. It is one of exactly two places the gradient appears on the page.
+ */
+.word,
+.spacer {
+  background-image: var(--grad-brand-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.spacer {
+  display: block;
+  white-space: nowrap;
+}
+
+[data-mode="cycling"] .spacer {
+  visibility: hidden;
+}
+
+.stack {
+  position: absolute;
+  inset: 0;
+  /* Server-rendered and no-JS state: the static word only. `visibility`
+     rather than `display: none` so GSAP's initial set() lands on elements
+     that are actually in the layout. */
+  visibility: hidden;
+}
+
+[data-mode="cycling"] .stack {
+  visibility: visible;
+}
+
+.word {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  /* No `will-change` here. GSAP sets it on the tween and clears it after;
+     a permanent will-change on 46 elements is 46 compositor layers held for
+     the life of the page. MOTION.md section 7. */
+}

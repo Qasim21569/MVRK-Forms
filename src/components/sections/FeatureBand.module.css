@@ -1,0 +1,76 @@
+/*
+ * One composition, four bands. Crisp over soft at every dial: 12px radii, a
+ * hairline instead of a glow, and a shadow you have to look for.
+ */
+
+.band {
+  color: var(--band-fg);
+}
+
+.inner {
+  width: 100%;
+  display: grid;
+  gap: clamp(34px, 4.5vh, 60px);
+}
+
+.items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: clamp(18px, 2vw, 26px);
+}
+
+/* Three up from 860px, one column below it. Nothing between: a two-up row of
+   three items always leaves one orphan. */
+@media (min-width: 860px) {
+  .items {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.item {
+  min-width: 0;
+}
+
+/* --- On cream: cards ------------------------------------------------
+   Cards are the light bands' job. --paper on --cream is a 2% step, so the
+   card reads as a raised plane rather than as a coloured box. */
+[data-tone="light"] .item {
+  padding: clamp(22px, 2.4vw, 30px);
+  border-radius: var(--r-md);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-tone="light"] .rule {
+  display: none;
+}
+
+/* --- On plum: no card, a hairline above each ------------------------
+   A card on plum needs its own fill, and the moment it has one the four
+   bands stop matching. A hairline does the same job of separating three
+   items and costs nothing. */
+[data-tone="plum"] .rule {
+  display: block;
+  height: 1px;
+  margin-bottom: clamp(20px, 2.2vw, 28px);
+  background: var(--band-line);
+}
+
+.icon {
+  display: block;
+  color: var(--band-icon);
+}
+
+.title {
+  /* Same rhythm on both tones even though only one of them has a card. */
+  margin: clamp(16px, 1.8vw, 22px) 0 0.4em;
+  color: var(--band-fg);
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--band-fg-2);
+}

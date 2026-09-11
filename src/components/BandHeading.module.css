@@ -1,0 +1,32 @@
+.block {
+  display: grid;
+  gap: clamp(12px, 1.4vw, 18px);
+}
+
+.eyebrow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85em;
+  margin: 0;
+  color: var(--band-fg-2);
+}
+
+.number {
+  /* Tabular so 01 and 04 occupy the same width and the four eyebrows line up
+     down the page even though they sit in four separate bands. */
+  font-variant-numeric: tabular-nums;
+  color: var(--band-fg);
+}
+
+.label {
+  display: inline-block;
+}
+
+.heading {
+  margin: 0;
+  color: var(--band-fg);
+  /* Wide enough that "Intelligent Automation" takes two lines and not three,
+     and the full width of the band is used rather than a narrow column with
+     a void beside it. */
+  max-width: 18ch;
+}

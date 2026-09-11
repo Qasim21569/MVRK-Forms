@@ -1,0 +1,180 @@
+/*
+ * The video is real now, so this band stops apologising for itself: full wrap
+ * width and real elevation. Motion density is still almost none — the video is
+ * the content, and dressing the frame would only compete with it.
+ */
+.demo {
+  padding-block: clamp(56px, 8vh, 104px);
+}
+
+.inner {
+  display: flex;
+  justify-content: center;
+}
+
+.frame {
+  width: 100%;
+  border-radius: var(--r-md);
+  border: 1px solid var(--band-line);
+  background: var(--paper);
+  overflow: clip;
+}
+
+/* Delivered: full width, real elevation, because it is now the strongest
+   asset on the page and should be treated like it. */
+.frame[data-state="video"] {
+  max-width: none;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Fallback if the id is ever nulled: a narrow strip, not a void. */
+.frame[data-state="pending"] {
+  max-width: 640px;
+  box-shadow: var(--shadow-sm);
+}
+
+/*
+ * The line that keeps the layout promise: the box is already exactly the
+ * proportion the player will be, so swapping the poster for the iframe cannot
+ * change the page's height.
+ */
+.screen {
+  aspect-ratio: 16 / 9;
+}
+
+.player {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* --- The facade -------------------------------------------------------- */
+
+.facade {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: var(--cream);
+  cursor: pointer;
+}
+
+.poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* A touch of desaturation at rest, so the plum play control reads against a
+     video still whose colours we do not control. It clears on hover. */
+  filter: saturate(0.9);
+  transition:
+    filter var(--dur-enter) var(--ease),
+    scale var(--dur-enter) var(--ease);
+}
+
+.playButton {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 76px;
+  height: 76px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  /* A ring rather than a soft shadow: over an arbitrary video still a blurred
+     shadow just reads as a compression artefact. */
+  box-shadow:
+    0 0 0 1px var(--line),
+    0 10px 30px rgba(30, 38, 48, 0.22);
+  transition:
+    background-color var(--dur-micro) var(--ease),
+    scale var(--dur-micro) var(--ease);
+}
+
+.playGlyph {
+  width: 30px;
+  height: 30px;
+  /* Optical centring: a triangle's visual mass sits left of its bounding box. */
+  margin-left: 3px;
+  fill: var(--plum);
+  stroke: none;
+  transition: fill var(--dur-micro) var(--ease);
+}
+
+@media (hover: hover) {
+  .facade:hover .poster {
+    filter: saturate(1);
+    scale: 1.012;
+  }
+  .facade:hover .playButton {
+    background: var(--plum);
+    scale: 1.05;
+  }
+  .facade:hover .playGlyph {
+    fill: var(--paper);
+  }
+}
+
+.facade:focus-visible {
+  outline: 2px solid var(--plum);
+  outline-offset: -4px;
+}
+
+@media (max-width: 599px) {
+  .playButton {
+    width: 58px;
+    height: 58px;
+  }
+  .playGlyph {
+    width: 23px;
+    height: 23px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster,
+  .playButton,
+  .playGlyph {
+    transition: none;
+  }
+  .facade:hover .poster,
+  .facade:hover .playButton {
+    scale: 1;
+  }
+}
+
+/* --- Fallback state ---------------------------------------------------- */
+
+.pending {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 16px;
+  background: var(--cream);
+}
+
+.pendingGlyph {
+  width: 40px;
+  height: 40px;
+  fill: var(--plum);
+  stroke: none;
+  opacity: 0.4;
+}
+
+.pendingChip {
+  padding: 7px 14px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--band-line);
+  background: var(--paper);
+  font-family: var(--font-label);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--grey);
+}

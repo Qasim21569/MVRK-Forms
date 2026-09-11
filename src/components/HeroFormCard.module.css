@@ -1,0 +1,179 @@
+/*
+ * Crisp, not soft. 12px radii, hairlines, and a shadow you have to look for.
+ * Large radii plus pastel plus a floaty shadow is the strongest "friendly SaaS
+ * template" signal there is, and this is the biggest surface on the hero, so
+ * it is where that signal was loudest.
+ */
+
+.stack {
+  position: relative;
+  width: 100%;
+  max-width: 404px;
+  /* Room for the back plane's offset, so neither the tilt nor the offset can
+     be clipped by the grid column. */
+  padding: 14px 14px 0 0;
+}
+
+/*
+ * The back plane. No content and no copy — it exists to say there is more
+ * than one of these, and to give the hero depth without a third colour.
+ */
+.behind {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 88%;
+  height: 74%;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  rotate: -2.5deg;
+}
+
+.window {
+  position: relative;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-md);
+  /*
+   * NO `overflow: clip`. It was clipping the submit button's own shadow flat
+   * against the card's inner edge, which is what read as the button breaking
+   * out of its container. Nothing here needs clipping: every child is a block
+   * in normal flow inside the padding box.
+   */
+  rotate: 1.5deg;
+}
+
+/* --- App chrome ------------------------------------------------------
+   Cloud, object tab, record status. Three elements, and between them they
+   say "you are looking at a record page inside Salesforce". */
+.chrome {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.cloud {
+  width: 26px;
+  height: auto;
+  flex: none;
+  /* Rule 4: Salesforce cyan marks Salesforce and nothing else. This glyph is
+     the only place it appears on the page. */
+  fill: var(--sf-cyan);
+  stroke: none;
+}
+
+.tab {
+  min-width: 0;
+  flex: 1;
+  padding: 5px 10px;
+  border-radius: var(--r-sm);
+  background: var(--cream);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status {
+  flex: none;
+  font-family: var(--font-label);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--white);
+  background: var(--plum);
+  padding: 4px 8px;
+  border-radius: var(--r-sm);
+}
+
+/* --- The form ---------------------------------------------------------- */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  padding: 16px 14px 18px;
+  min-width: 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.fieldLabel {
+  font-family: var(--font-label);
+  font-size: 8.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--grey);
+  /* The longest label is "How Did You Hear About Us". If Vuk lengthens one in
+     config it truncates rather than wrapping and breaking the row rhythm. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.input {
+  height: 34px;
+  border-radius: var(--r-sm);
+  background: var(--cream);
+  border: 1px solid var(--line);
+}
+
+/*
+ * The one saturated element in the window, because on the real product this
+ * is the one thing you press. Rose is the action colour, here as much as on
+ * the page's own CTA.
+ *
+ * A flex-column child, so the container stretches it and its box is the
+ * padding box — there is no explicit width to disagree with the padding,
+ * which is what let the old version overflow.
+ */
+.submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  margin-top: 3px;
+  border-radius: var(--r-sm);
+  background: var(--rose-cta);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+
+@media (max-width: 899px) {
+  .stack {
+    /* Straightened: under the CTA a tilt just looks like a rendering error.
+       Keeps its full width and crops off the right edge rather than shrinking
+       into a thumbnail — see .cardSlot in Hero.module.css. */
+    width: 404px;
+    max-width: none;
+    flex: none;
+  }
+
+  .window,
+  .behind {
+    rotate: 0deg;
+  }
+
+  /* With no tilt the back plane reads as a misalignment rather than depth. */
+  .behind {
+    display: none;
+  }
+}

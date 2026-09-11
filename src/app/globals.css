@@ -1,0 +1,444 @@
+@import "tailwindcss";
+
+/* ==================================================================
+   Type
+
+   THERE IS NO @font-face BLOCK IN THIS FILE, AND THERE MUST NEVER BE ONE.
+
+   This bug has now been introduced three separate times, each time a
+   different way, so here is the whole thing in one place:
+
+   1. Tailwind v4's `@theme inline` deliberately does NOT emit its custom
+      properties. `--font-display` declared there resolves to the empty
+      string, `font-family` becomes invalid at computed-value time, and
+      every heading silently falls back to the system sans.
+
+   2. A hand-written @font-face pointing at `/fonts/...` is a bare absolute
+      path. Under `basePath: "/forms"` it resolves to `mvrk.ca/fonts/...`
+      and 404s on every load. CLAUDE.md rule 11 forbids exactly this.
+
+   3. Those .ttf files do not exist in this project at all. They live in
+      mvrk-orbit. The real faces here are woff2 in `src/fonts/`, and the
+      a previous version of this file pointed `--font-display` at "grotesk" —
+      Founders Grotesk, a face this page does not use and never loaded.
+      PP Rader is now gone entirely; the display face is Outfit, from
+      next/font/google, and nothing here is self-hosted except Neue Montreal.
+
+   The only correct mechanism is next/font, in layout.tsx, which fingerprints
+   the files into `/forms/_next/static/media/` and publishes them as
+   `--font-outfit`, `--font-montreal` and `--font-jb` on
+   <html>. This block aliases those three and nothing else, in a real `:root`
+   and never in `@theme`.
+
+   They are on <html> and not <body> on purpose: a custom property is
+   substituted at computed-value time on the element its declaration applies
+   to, so `var(--font-outfit)` inside a `:root` rule resolves against <html>.
+   One level down and it resolves to nothing.
+   ================================================================== */
+
+:root {
+  --font-display: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-montreal), ui-sans-serif, system-ui, sans-serif;
+  --font-label: var(--font-jb), ui-monospace, monospace;
+
+}
+
+/* ==================================================================
+   MVRK Forms — design tokens, v2
+
+   Warm carries the page, cool marks the Salesforce-adjacent. Cream and
+   plum are the world. Cyan lives in the hero and as --band-icon on the
+   plum bands, and nowhere else.
+
+   THERE IS NO BLACK IN THIS PALETTE. --ink #4B5B71 is the floor.
+   ================================================================== */
+
+:root {
+  /* --- Forms brand sheet. These six never change. --- */
+  --plum: #814d71;
+  --rose: #e0778f;
+  --grey: #5e5e5e;
+
+  /* --- MVRK parent palette --- */
+  --turquoise: #61d0de;
+  --teal: #3eacb7;
+  --slate: #617f95;
+  --ink: #4b5b71;
+  --white: #ffffff;
+
+  /* --- Grounds, v2 ------------------------------------------------- */
+  --cream: #f6f0e6;
+  --paper: #fbf8f3;
+  --tint: #cceef3;
+
+  /* --- Reserved. Marks Salesforce and nothing else. ---
+     USED ONCE, DELIBERATELY: the Salesforce cloud glyph in the hero's app
+     window (HeroFormCard). That is the whole permitted scope — rule 4 — and
+     it settles the token from "carried but unused" to "used on purpose".
+     --turquoise and --teal remain carried for palette parity with
+     mvrk.ca/zapier and have no job. Do not reach for any of the three as a
+     general accent. */
+  --sf-cyan: #01a0e1;
+
+  /* --- Derived ------------------------------------------------------ */
+  --plum-deep: #5e3852;
+  --rose-soft: #f0b5c3;
+  --rose-ink: #c4566e;
+  --rose-cta: #bc4e66;
+  --rose-cta-deep: #ad4359;
+
+  --line: rgba(75, 91, 113, 0.14);
+  --line-on-plum: rgba(246, 240, 230, 0.22);
+
+  /* The one gradient that is not decoration: the logo's own. It appears in
+     exactly two places — the hero's cycling word, and the logo artwork. The
+     type version starts at --rose-ink because --rose itself is 2.37:1 on the
+     tint hero and fails the 3:1 large-text floor. */
+  --grad-brand-text: linear-gradient(140deg, var(--rose-ink) 0%, var(--plum) 78%);
+
+
+  /* --- Motion, mirrored from src/lib/motion.ts --- */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-enter: 0.7s;
+  --dur-micro: 0.25s;
+  --travel: 22px;
+
+  /* --- Layout --- */
+  --gutter: clamp(20px, 5vw, 72px);
+  --maxw: 1280px;
+  --nav-h: 76px;
+
+  /* --- Surface language --- */
+  /* Two radii and a pill, and that is the whole scale.
+     26px cards plus pastel cream plus a soft shadow is the single strongest
+     "friendly SaaS template" signal on the page. Everything here got
+     crisper; nothing got softer. Only the CTA stays a pill. */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-pill: 999px;
+
+  /* Halved. Everything on the page was floating: stacked shadows on a card
+     over a pastel ground is what makes a layout read as friendly rather than
+     built. Opacity to ~60%, blur to ~70%. */
+  --shadow-sm: 0 1px 2px rgba(75, 91, 113, 0.04);
+  --shadow-md: 0 1px 2px rgba(75, 91, 113, 0.03),
+    0 8px 24px rgba(75, 91, 113, 0.05);
+  --shadow-lg: 0 2px 6px rgba(75, 91, 113, 0.03),
+    0 18px 44px rgba(75, 91, 113, 0.07);
+  --shadow-cta: 0 1px 3px rgba(129, 77, 113, 0.1),
+    0 8px 18px rgba(129, 77, 113, 0.11);
+
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/*
+ * A SECOND :root FONT BLOCK USED TO LIVE HERE, and deleting it is the fourth
+ * fix for the same defect.
+ *
+ * It declared --font-display: "grotesk" and --font-body: "nmontreal", and
+ * because it came later in the file it won the cascade over the correct
+ * aliases at the top. Neither family exists in this project: "grotesk" is
+ * Founders Grotesk and "nmontreal" is a hand-written @font-face name, both
+ * from mvrk-orbit. So every heading and every paragraph resolved to a family
+ * that was never loaded and fell back to the system sans — the exact symptom
+ * of defect 1, arrived at a fourth different way.
+ *
+ * There is ONE font alias block in this file and it is at the top. Run
+ * `npm run check:fonts` after touching type; it fails on a duplicate
+ * declaration, on any @font-face, and on any reference to a dead family.
+ */
+
+html {
+  background: var(--cream);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.55;
+  overflow-x: clip;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* White on --rose is 2.91:1. Plum is 5.73:1 on cream. */
+::selection {
+  background: var(--plum);
+  color: var(--cream);
+}
+
+:focus-visible {
+  outline: 2px solid var(--plum);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Plum-on-plum and plum-on-ink are invisible. Cool palette takes over. */
+[data-tone="plum"] :focus-visible,
+[data-tone="ink"] :focus-visible {
+  outline-color: var(--tint);
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+/*
+ * Scroll lock while the intro curtain is up.
+ *
+ * A separate attribute from the state value on purpose, so it can be released
+ * independently of the animation finishing — the page is cut loose mid-lift,
+ * not at the end of it.
+ *
+ * This is belt to the braces of gating Lenis itself (see ScrollFxProvider):
+ * without both, wheel events under the curtain scroll the hero out of frame
+ * and the reveal lands halfway down the page.
+ */
+html[data-intro-lock],
+html[data-intro-lock] body {
+  overflow: hidden;
+}
+
+/* --- Lenis --- */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ==================================================================
+   Type
+
+   Scale from DESIGN-DIRECTION.md section 5.
+   ================================================================== */
+
+.u-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+.u-h1 {
+  /* 40px floor with an 11vw ramp: at 320px a 52px display face put
+     "Frictionless" wider than the viewport. */
+  font-size: clamp(40px, 11vw, 132px);
+  letter-spacing: -0.03em;
+  line-height: 0.92;
+}
+
+.u-h2 {
+  font-size: clamp(38px, 5vw, 76px);
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+}
+
+.u-h3 {
+  font-size: clamp(21px, 1.8vw, 26px);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.u-lead {
+  font-family: var(--font-body);
+  font-size: clamp(19px, 1.6vw, 24px);
+  line-height: 1.4;
+  max-width: 42ch;
+}
+
+.u-body {
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.55;
+  /* Short measures read as designed. */
+  max-width: 34ch;
+}
+
+.u-label {
+  font-family: var(--font-label);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* The logo's gradient. Two places on the page: the cycling word, and the
+   logo artwork itself. */
+.u-grad {
+  background: var(--grad-brand-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Visually hidden, still announced. */
+.u-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==================================================================
+   Band tones
+
+   Depth is allowed and wanted now. Plum bands take an inset vignette
+   toward --plum-deep; cream grounds take the grain. What is still
+   banned is decorative gradient.
+   ================================================================== */
+
+[data-tone] {
+  position: relative;
+}
+
+[data-tone="light"] {
+  background: var(--cream);
+  background-image: var(--grain);
+  background-size: 140px 140px;
+  --band-fg: var(--ink);
+  --band-fg-2: var(--grey);
+  --band-icon: var(--plum);
+  --band-surface: var(--paper);
+  --band-line: var(--line);
+}
+
+[data-tone="plum"] {
+  background: var(--plum);
+  background-image: radial-gradient(
+    120% 85% at 50% 42%,
+    rgba(129, 77, 113, 0) 0%,
+    rgba(94, 56, 82, 0.55) 100%
+  );
+  --band-fg: var(--cream);
+  --band-fg-2: rgba(246, 240, 230, 0.88);
+  --band-icon: var(--tint);
+  --band-surface: rgba(246, 240, 230, 0.07);
+  --band-line: var(--line-on-plum);
+}
+
+[data-tone="ink"] {
+  background: var(--ink);
+  --band-fg: var(--cream);
+  --band-fg-2: rgba(246, 240, 230, 0.82);
+  --band-icon: var(--tint);
+  --band-surface: rgba(246, 240, 230, 0.07);
+  --band-line: var(--line-on-plum);
+}
+
+/* Hero. The page's one cool moment: tint ground easing to cream at the
+   foot so it hands off to the band below without a seam. */
+[data-tone="tint"] {
+  background: var(--tint);
+  background-image: var(--grain),
+    radial-gradient(
+      110% 80% at 82% 4%,
+      rgba(251, 248, 243, 0.72) 0%,
+      rgba(251, 248, 243, 0) 62%
+    ),
+    linear-gradient(180deg, rgba(246, 240, 230, 0) 58%, var(--cream) 100%);
+  background-size: 140px 140px, auto, auto;
+  --band-fg: var(--ink);
+  --band-fg-2: var(--grey);
+  --band-icon: var(--plum);
+  --band-surface: var(--paper);
+  --band-line: var(--line);
+}
+
+/*
+ * Grain lives in --grain as a background LAYER now, composited into each
+ * cream ground's own `background-image` below. It used to be a ::after
+ * pseudo-element with `mix-blend-mode: multiply`.
+ *
+ * That was a flicker source. A blend mode forces the whole band into its own
+ * blending context, so every scroll frame repainted a full-viewport blended
+ * layer, and it needed `[data-tone] > * { position: relative; z-index: 1 }`
+ * on every direct child to keep the overlay off the text — which put a
+ * stacking context on half the elements on the page.
+ *
+ * As a background layer there is no extra element, no blend context and no
+ * z-index bookkeeping. The 3% is baked into the SVG's own rect opacity, so
+ * the layer needs no opacity of its own.
+ */
+
+/* ==================================================================
+   Layout primitives
+   ================================================================== */
+
+.u-wrap {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.u-section {
+  /* Down ~25%. The page was 5900px tall and mostly air. */
+  padding-block: clamp(62px, 9vh, 126px);
+}
+
+/* ==================================================================
+   Icons — one set, one 24px grid, one stroke.
+   ================================================================== */
+
+.u-icon {
+  width: 40px;
+  height: 40px;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  flex: none;
+}
+
+/* ==================================================================
+   Reveals — scoped to html.js, fail open.
+   ================================================================== */
+
+html.js [data-fx] {
+  opacity: 0;
+}
+
+html.js [data-mask-word] {
+  transform: translateY(108%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html.js [data-fx],
+  [data-fx],
+  html.js [data-mask-word] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

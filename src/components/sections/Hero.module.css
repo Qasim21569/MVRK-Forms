@@ -1,0 +1,136 @@
+.hero {
+  display: flex;
+  align-items: center;
+  /* 88vh on desktop. dvh on mobile, never vh: on iOS Safari `vh` is the
+     tallest the viewport ever gets, so 100vh puts the CTA under the address
+     bar on load and nothing below the fold looks reachable. */
+  min-height: 88svh;
+  padding-top: calc(var(--nav-h) + clamp(28px, 5vh, 64px));
+  padding-bottom: clamp(48px, 7vh, 96px);
+}
+
+@media (max-width: 899px) {
+  .hero {
+    min-height: 100dvh;
+  }
+}
+
+.inner {
+  width: 100%;
+  display: grid;
+  gap: clamp(36px, 5vw, 64px);
+  align-items: center;
+}
+
+/* The card comes off the right only when there is room for the headline to
+   stay large next to it. Below this the card moves under the CTA. */
+@media (min-width: 900px) {
+  .inner {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr);
+  }
+}
+
+.copy {
+  min-width: 0;
+}
+
+.headline {
+  margin: 0;
+  /* .u-display sets text-wrap: balance, which fights a two-line headline
+     where line 1 is a single measured word and line 2 is fixed. */
+  text-wrap: initial;
+}
+
+/*
+ * Line 1, the cycling word.
+ *
+ * Its own line-height, because Instrument Serif set at 1.1em needs more room
+ * than Outfit does at the same nominal size, and the descenders on Funky, Fly
+ * and Freestyle have to clear the mask below.
+ *
+ * The gradient lives on THIS element, not on the word spans inside it.
+ * `background-clip: text` clips whatever background the element paints, and
+ * the words are absolutely positioned — put the gradient on each of them and
+ * every word gets its own gradient starting from scratch, which renders each
+ * one as a single flat colour instead of a shift across the word.
+ */
+.line1 {
+  display: block;
+  line-height: 1.04;
+  /* Room below the baseline for the descenders and for the clip edge, or the
+     gradient's bottom cuts through the glyphs. */
+  padding-bottom: 0.06em;
+}
+
+.line2 {
+  display: block;
+  color: var(--ink);
+}
+
+/*
+ * Headline, subhead and CTA are ONE tight block.
+ *
+ * The previous hero had ~300px of empty gradient between the headline and the
+ * subhead: the headline's own line-height at 132px, plus a vh-based margin,
+ * plus the grid centring the column in an over-tall section. All three are
+ * gone — the margins below are em-based off the subhead's own size, so they
+ * stay proportional instead of growing with the viewport.
+ */
+.subhead {
+  margin: 0.9em 0 0;
+  color: var(--ink);
+  /* --ink on --tint is 5.63:1. The old var(--band-fg-2) resolved to --grey,
+     which is 5.28:1 on tint — passing, but the ink reads sharper here. */
+}
+
+@media (min-width: 900px) {
+  .subhead {
+    /* 100% Salesforce Native Forms. Free Forever! must sit on ONE line at
+       desktop. It is the sentence the whole product rests on and the old
+       measure broke it after "Free". */
+    max-width: none;
+    white-space: nowrap;
+  }
+}
+
+.action {
+  margin-top: clamp(24px, 3vh, 34px);
+}
+
+.cardSlot {
+  display: flex;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+@media (min-width: 900px) {
+  .cardSlot {
+    justify-content: flex-end;
+  }
+}
+
+/*
+ * Mobile: the card CROPS off the right edge rather than shrinking. A card
+ * scaled down to fit reads as a thumbnail of a screenshot; a card running off
+ * the edge reads as a real object that continues past the viewport.
+ *
+ * THE CROP IS LOCAL, and it has to be. The first version let the card
+ * overflow the page and relied on `body { overflow-x: clip }` to hide it.
+ * That produced a genuinely nasty chain: `overflow: clip` makes body a
+ * containing block for fixed-position descendants, so the fixed nav stopped
+ * sizing to the viewport and started sizing to body's CONTENT width — which
+ * the overflowing card had just made 424px wide on a 320px screen. The nav
+ * stretched with it and its CTA ended up a third of the way off the right
+ * edge. Nothing about the symptom pointed at the hero.
+ *
+ * Clipping here instead means the card is cropped exactly the same way and
+ * the page's content width never grows.
+ */
+@media (max-width: 899px) {
+  .cardSlot {
+    /* Cancel the wrap's right gutter so the crop happens at the true screen
+       edge rather than a gutter short of it. */
+    margin-right: calc(var(--gutter) * -1);
+    overflow: clip;
+  }
+}

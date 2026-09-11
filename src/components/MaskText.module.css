@@ -1,0 +1,18 @@
+/*
+ * padding-bottom makes room for the descenders on "Design" and "Sharing";
+ * the matching negative margin cancels that padding out of the layout, so the
+ * heading's line-height is exactly what .u-h2 says it is.
+ *
+ * The clip then sits on the padded bottom edge — below the descenders — with
+ * negative insets on the other three sides so nothing clips an ascender or an
+ * overhanging terminal.
+ */
+.word {
+  display: inline-block;
+  padding-bottom: 0.2em;
+  margin-bottom: -0.2em;
+  clip-path: inset(-0.8em -0.4em 0 -0.4em);
+  /* No `will-change`. GSAP sets it per tween and clears it on completion;
+     a static rule holds a compositor layer for every heading word for the
+     life of the page. MOTION.md section 7. */
+}

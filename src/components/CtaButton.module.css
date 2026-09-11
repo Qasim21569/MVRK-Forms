@@ -1,0 +1,116 @@
+/*
+ * Rose is the action colour and nothing else on this page uses it.
+ *
+ * The fill is --rose-cta, not --rose: white on --rose is 2.91:1 and a button
+ * label is normal text, so it needs 4.5:1. --rose-cta is 4.75:1 and still
+ * unmistakably the same pink. The six brand hexes are untouched — --rose
+ * itself carries the hero card's dot and the logo artwork.
+ *
+ * THE HOVER, effect 4 of the page's five: a --plum fill rises from below over
+ * DUR_MICRO and a duplicate label rises with it. Two transforms and no colour
+ * transition, so it is cheap, and it lands hard on the out-curve rather than
+ * cross-fading, which is what makes it read as built rather than as a
+ * default. The pill is the one radius exception on the page.
+ */
+
+.cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--rose-cta);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  box-shadow: var(--shadow-cta);
+  /* 44px minimum tap target, both variants. */
+  min-height: 44px;
+}
+
+.nav {
+  padding: 0 1.15rem;
+  font-size: 15px;
+}
+
+.page {
+  padding: 0 1.8rem;
+  font-size: 17px;
+  min-height: 52px;
+}
+
+.fill {
+  position: absolute;
+  inset: 0;
+  background: var(--plum);
+  translate: 0 101%;
+  transition: translate var(--dur-micro) var(--ease);
+}
+
+.label,
+.fillLabel {
+  position: relative;
+  display: block;
+  transition: translate var(--dur-micro) var(--ease);
+}
+
+/* The duplicate waits one line below, exactly where the real label sits. */
+.fillLabel {
+  position: absolute;
+  translate: 0 120%;
+}
+
+@media (hover: hover) {
+  .cta:hover .fill {
+    translate: 0 0;
+  }
+  .cta:hover .label {
+    translate: 0 -120%;
+  }
+  .cta:hover .fillLabel {
+    translate: 0 0;
+  }
+}
+
+/* Keyboard gets the same feedback as the pointer. */
+.cta:focus-visible .fill {
+  translate: 0 0;
+}
+.cta:focus-visible .label {
+  translate: 0 -120%;
+}
+.cta:focus-visible .fillLabel {
+  translate: 0 0;
+}
+
+/*
+ * On --ink the rose pill is only 1.46:1 against its own background: the label
+ * inside is fine, but the button's silhouette goes mushy. A cream hairline
+ * gives it an edge without introducing a colour that is not already here.
+ */
+[data-tone="ink"] .cta {
+  box-shadow: 0 0 0 1px rgba(246, 240, 230, 0.28);
+}
+
+/*
+ * Reduced motion: no rise. The fill is not the affordance, the colour change
+ * is, so it swaps instantly instead of sliding.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .cta:hover {
+    background: var(--plum);
+  }
+  .cta:hover .fill,
+  .cta:hover .label,
+  .cta:hover .fillLabel {
+    translate: 0 0;
+  }
+  .cta:hover .fillLabel {
+    display: none;
+  }
+}

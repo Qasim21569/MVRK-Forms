@@ -1,0 +1,37 @@
+.footer {
+  color: var(--band-fg);
+  padding-block: clamp(64px, 9vh, 120px);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: clamp(20px, 3vh, 30px);
+}
+
+.lockup {
+  height: clamp(30px, 4.4vw, 42px);
+  width: auto;
+}
+
+.tagline {
+  margin: 0;
+  font-size: clamp(17px, 1.6vw, 20px);
+  color: var(--band-fg-2);
+}
+
+.copyright {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  /*
+   * 0.84 measures 4.87:1 on --ink. It was 0.76, which was the right floor
+   * back when this alpha was over the old cool --paper; against the warmer
+   * --cream it drops to 4.32:1 and fails AA for 12px type. Measured on the
+   * live DOM, not off the token table.
+   */
+  color: rgba(246, 240, 230, 0.84);
+}

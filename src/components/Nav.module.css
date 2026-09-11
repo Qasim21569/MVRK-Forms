@@ -1,0 +1,59 @@
+/*
+ * Effect 5 of the page's five: the nav shrinks once you are past the hero.
+ * Height and padding only — no colour animation, no logo scale, no blur
+ * fade-in. It is the cheapest possible signal that you have left the top of
+ * the page, and it is the one piece of chrome that is allowed to change.
+ */
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition:
+    height var(--dur-enter) var(--ease),
+    background-color var(--dur-enter) var(--ease),
+    border-color var(--dur-enter) var(--ease);
+}
+
+.lifted {
+  /* From 76px to 60px. */
+  height: 60px;
+  background: rgba(246, 240, 230, 0.9);
+  border-bottom-color: var(--line);
+  backdrop-filter: saturate(1.35) blur(12px);
+  -webkit-backdrop-filter: saturate(1.35) blur(12px);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.lockup {
+  height: 26px;
+  width: auto;
+  transition: height var(--dur-enter) var(--ease);
+}
+
+@media (min-width: 480px) {
+  .lockup {
+    height: 30px;
+  }
+
+  .lifted .lockup {
+    height: 26px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav,
+  .lockup {
+    transition: none;
+  }
+}

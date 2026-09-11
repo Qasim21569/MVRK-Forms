@@ -1,0 +1,44 @@
+.band {
+  padding: 40px var(--gutter);
+  color: var(--band-fg);
+}
+
+.caption {
+  margin: 0 0 20px;
+  color: var(--band-fg-2);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  align-items: center;
+  color: var(--band-icon);
+}
+
+.big {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  color: var(--band-icon);
+}
+
+.cell {
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  width: 132px;
+}
+
+/* Same artwork, four times the size. stroke-width is in viewBox units, so
+   the proportions are identical — this row is only for spotting a slipped
+   node or an unclosed path, never for judging whether the set works. */
+.cell :global(.u-icon) {
+  width: 96px;
+  height: 96px;
+}
+
+.name {
+  font-size: 10px;
+  color: var(--band-fg-2);
+}

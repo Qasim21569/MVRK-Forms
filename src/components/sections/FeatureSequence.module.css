@@ -1,0 +1,58 @@
+.sequence {
+  position: relative;
+}
+
+/*
+ * The two edges of the boundary. Cream strips, because the closing rule lands
+ * straight after a plum band and a plum hairline on plum is invisible.
+ *
+ * Deliberately shallow: this is a rule with a label on it, not a section.
+ */
+.bracket {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  background: var(--cream);
+  padding-inline: var(--gutter);
+}
+
+.bracket[data-edge="close"] {
+  height: 40px;
+}
+
+/*
+ * Full width, 1px, real --plum. 5.73:1 on cream, so it is a line you can
+ * actually see — which was the whole problem with the old frame.
+ */
+.rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--plum);
+}
+
+.bracket[data-edge="open"] .rule {
+  bottom: 0;
+}
+
+.bracket[data-edge="close"] .rule {
+  top: 0;
+}
+
+/*
+ * Sits ON the opening rule, with the cream ground behind it breaking the line
+ * cleanly — the standard fieldset-legend read, which is exactly the meaning
+ * wanted here.
+ */
+.label {
+  position: absolute;
+  bottom: 0;
+  left: var(--gutter);
+  transform: translateY(50%);
+  padding-right: 14px;
+  background: var(--cream);
+  color: var(--plum);
+  white-space: nowrap;
+}
