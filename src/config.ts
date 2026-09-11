@@ -138,6 +138,19 @@ export const heroCard = {
  * The embed uses youtube-nocookie.com.
  */
 export const demo = {
+  /**
+   * The cue that sits in the gap between the hero and the video, telling you
+   * the thing below is a video of the product rather than another graphic.
+   *
+   * From Vuk, Telegram, 11/09/26, asked for and answered specifically for this
+   * space. TRANSCRIBED EXACTLY, INCLUDING "Were" — that is his, not a typo
+   * introduced here, and rule 1 says copy is law and never gets polished. If
+   * he wants the apostrophe it changes on this line and nowhere else.
+   *
+   * The arrow under it is not copy. He was asked about it in the same thread
+   * and said "Sure make it how you like", so it is a drawn glyph, not a string.
+   */
+  cue: "Take A Peek At What Were Building",
   /** YouTube video id. Null falls back to the designed placeholder state. */
   youtubeId: "Y7ZDRdq3ZuE" as string | null,
   /** 1280x720, from the video's own maxres thumbnail, re-encoded. */

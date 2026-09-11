@@ -7,6 +7,55 @@
   padding-block: clamp(56px, 8vh, 104px);
 }
 
+/*
+ * The cue, in the gap between the hero and the video.
+ *
+ * That gap was dead space on a phone — the hero ends, then a lot of nothing,
+ * then a video card with no indication it is a video of the product rather
+ * than another graphic. One line and an arrow is enough to say what it is and
+ * to pull the eye down into it.
+ *
+ * Centred here and nowhere else on the page: the cue points at something
+ * directly beneath it, so it has to sit over the middle of what it points at.
+ * Every other block on the page stays left-aligned.
+ */
+.cue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(14px, 2vh, 22px);
+  padding-bottom: clamp(30px, 5vh, 56px);
+  text-align: center;
+}
+
+.cueText {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  /* Between .u-h3 and .u-lead: it is a cue, not a heading. Nothing on the page
+     competes with it because nothing else lives in this gap. */
+  font-size: clamp(20px, 2.2vw, 28px);
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  color: var(--ink);
+  /* --ink on --cream is 7.87:1. */
+  max-width: 20ch;
+  text-wrap: balance;
+}
+
+.cueArrow {
+  width: 30px;
+  height: 30px;
+  stroke: var(--plum);
+  /* Matches .u-icon so the arrow belongs to the same drawn language as the
+     twelve band icons, at the smaller size a UI affordance wants. */
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  flex: none;
+}
+
 .inner {
   display: flex;
   justify-content: center;

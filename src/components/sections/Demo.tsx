@@ -39,6 +39,18 @@ export default function Demo() {
 
   return (
     <section id="demo" data-tone="light" className={styles.demo}>
+      {/*
+        Plain data-fx, not data-fx-stagger. A staggered container is set to
+        opacity 1 at load and its CHILDREN carry the reveal, so they sit
+        visible until the trigger fires and then snap to 0 to animate in. That
+        is invisible three screens down; this block is the first thing under
+        the hero and the snap would be right where you are looking.
+      */}
+      <div className={`u-wrap ${styles.cue}`} data-fx>
+        <p className={styles.cueText}>{demo.cue}</p>
+        <ArrowGlyph className={styles.cueArrow} />
+      </div>
+
       <div className={`u-wrap ${styles.inner}`}>
         <div
           className={styles.frame}
@@ -92,6 +104,24 @@ export default function Demo() {
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * The cue arrow. Same 24px grid and stroke language as the twelve feature
+ * icons, but drawn here rather than added to that set: the set is twelve
+ * illustrations of product capabilities and this is a UI affordance pointing
+ * at the thing below it. PlayGlyph sits here for the same reason.
+ *
+ * It does not bob. A looping arrow is the obvious thing to reach for and
+ * CLAUDE.md rule 8 allows exactly one forever loop on the page, which the word
+ * cycler already owns. This enters once with the cue and settles.
+ */
+function ArrowGlyph({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 4.5v15M6.2 13.4 12 19.5l5.8-6.1" />
+    </svg>
   );
 }
 
