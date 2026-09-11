@@ -285,14 +285,64 @@ export default function ScrollFxProvider({
         words.forEach((word, i) => {
           gsap.fromTo(
             word,
-            { yPercent: 108 },
+            /*
+             * `y: 0` IS LOAD-BEARING. Removing it re-breaks the headings.
+             *
+             * The word is parked by a stylesheet rule, not by GSAP:
+             *
+             *   html.js [data-mask-word] { transform: translateY(108%) }
+             *
+             * When the tween starts, GSAP parses the element's CURRENT computed
+             * transform and keeps whatever it finds as the baseline. It reads
+             * that 108% as a concrete pixel offset and holds onto it as `y`,
+             * then animates `yPercent` on top. Mid-tween the inline style is
+             * literally:
+             *
+             *   translate(0%, 82.76%) translate3d(0px, 79.488px, 0px)
+             *                                          ^ the absorbed park
+             *
+             * So the word finishes at yPercent 0 PLUS a leftover 79.488px and
+             * sits exactly one line low — on top of the cards beneath it.
+             * Naming `y` here puts that offset under the tween's control and
+             * animates it to a real zero.
+             */
+            { yPercent: 108, y: 0 },
             {
               yPercent: 0,
+              y: 0,
               duration: DUR_ENTER,
               ease: EASE_MASK,
               delay: lineOf[i] * 0.08,
               immediateRender: false,
-              clearProps: "willChange,transform",
+              /*
+               * NEVER clearProps "transform" HERE, and the asymmetry with the
+               * entrances above is the whole point.
+               *
+               * A [data-fx] element is parked by CSS on OPACITY, and its tween
+               * clears transform — two different properties, so clearing is
+               * harmless. A mask word is parked by CSS on TRANSFORM:
+               *
+               *   html.js [data-mask-word] { transform: translateY(108%) }
+               *
+               * Clearing the inline transform therefore hands the word straight
+               * back to that rule. Every heading re-parked itself 108% down the
+               * instant its entrance finished, landing on top of the cards
+               * below it, and the ONLY thing that ever put it right was the
+               * geometric failsafe — which by design waits for the element to
+               * be due and stay hidden for GRACE_MS. That wait is exactly the
+               * "headings sit low for a couple of seconds, then jump into
+               * place" that this page shipped with.
+               *
+               * So: clear willChange, and land the word on an explicit
+               * transform:none. Inline beats the stylesheet, the word stays
+               * where it was animated to, and computed transform reads
+               * literally "none" — which is also the state the failsafe writes,
+               * so the two agree instead of fighting.
+               */
+              clearProps: "willChange",
+              onComplete: () => {
+                word.style.transform = "none";
+              },
               scrollTrigger: {
                 trigger: block,
                 start: SCROLL_START,

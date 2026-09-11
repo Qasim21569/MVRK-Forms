@@ -31,21 +31,11 @@ import styles from "./FeatureBand.module.css";
  * all four, which is what makes them read as one page.
  * ---------------------------------------------------------------------------
  */
-export default function FeatureBand({
-  band,
-  index,
-}: {
-  band: Band;
-  index: number;
-}) {
+export default function FeatureBand({ band }: { band: Band }) {
   return (
     <section id={band.id} data-tone={band.tone} className={styles.band}>
       <div className={`u-wrap u-section ${styles.inner}`}>
-        <BandHeading
-          index={index}
-          eyebrow={band.eyebrow}
-          heading={band.heading}
-        />
+        <BandHeading heading={band.heading} />
 
         {/* One trigger, children staggered. Three items in a row that each
             had their own trigger would arrive at visibly different times. */}
