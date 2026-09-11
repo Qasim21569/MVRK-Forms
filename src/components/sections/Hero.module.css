@@ -12,6 +12,17 @@
 @media (max-width: 899px) {
   .hero {
     min-height: 100dvh;
+    /*
+     * Clear the nav and nothing more.
+     *
+     * The desktop rule adds another 28-64px on top of --nav-h. On a phone the
+     * copy is the only thing in the band and it is CENTRED, so that extra
+     * padding is counted twice: once as padding, then again as half the
+     * leftover space. It put ~260px of empty tint above the headline against
+     * ~190px below it, which is what made a full-height hero read as
+     * top-heavy rather than full.
+     */
+    padding-top: var(--nav-h);
   }
 }
 
@@ -110,27 +121,65 @@
 }
 
 /*
- * Mobile: the card CROPS off the right edge rather than shrinking. A card
- * scaled down to fit reads as a thumbnail of a screenshot; a card running off
- * the edge reads as a real object that continues past the viewport.
+ * Mobile: THE CARD IS GONE, not shrunk and not cropped.
  *
- * THE CROP IS LOCAL, and it has to be. The first version let the card
- * overflow the page and relied on `body { overflow-x: clip }` to hide it.
- * That produced a genuinely nasty chain: `overflow: clip` makes body a
- * containing block for fixed-position descendants, so the fixed nav stopped
- * sizing to the viewport and started sizing to body's CONTENT width — which
- * the overflowing card had just made 424px wide on a 320px screen. The nav
- * stretched with it and its CTA ended up a third of the way off the right
- * edge. Nothing about the symptom pointed at the hero.
+ * It used to crop off the right edge on the theory that a half-visible card
+ * reads as a real object continuing past the viewport. On an actual phone it
+ * does not — it reads as a rendering fault, a pale rectangle bleeding off the
+ * screen under the CTA with no way to see the rest of it. The card is a
+ * picture of the product, and half a picture sells nothing.
  *
- * Clipping here instead means the card is cropped exactly the same way and
- * the page's content width never grows.
+ * Dropping it hands the whole viewport to the headline, subhead and CTA,
+ * which is the one job the mobile hero has. The card is pure CSS and one
+ * inline SVG with no asset behind it, so `display: none` costs nothing at
+ * load, and it is already `aria-hidden` — nothing is lost to assistive tech
+ * that was not already being withheld from it by design.
+ *
+ * Kept for the record, because it cost an afternoon: the first version let
+ * the card overflow the page and relied on `body { overflow-x: clip }` to
+ * hide it. `overflow: clip` makes body a containing block for fixed-position
+ * descendants, so the fixed nav stopped sizing to the viewport and started
+ * sizing to body's CONTENT width — which the overflowing card had just made
+ * 424px wide on a 320px screen. The nav stretched with it and its CTA ended
+ * up a third of the way off the right edge. If a card ever comes back to
+ * mobile, it clips LOCALLY or not at all.
  */
 @media (max-width: 899px) {
   .cardSlot {
-    /* Cancel the wrap's right gutter so the crop happens at the true screen
-       edge rather than a gutter short of it. */
-    margin-right: calc(var(--gutter) * -1);
-    overflow: clip;
+    display: none;
+  }
+
+  /*
+   * With the card gone the copy is alone in 100dvh, so it is sized to FILL
+   * that height rather than floating as a small block in the middle of an
+   * empty screen. 16.8vw against the global 11vw ramp: at 375px that is 63px
+   * instead of 41px.
+   *
+   * 16.8vw is not a taste number, it is the measured ceiling less a margin.
+   * The widest thing the headline ever has to fit is not line 2 — it is the
+   * longest word in the cycler, "Formidable", which measures 5.007em in
+   * Outfit 700 at this letter-spacing. Inside the gutters that allows:
+   *
+   *   375px screen → 335px of measure → 66px ceiling
+   *   320px screen → 280px of measure → 55px ceiling
+   *
+   * 16.8vw lands at 63px and 53.8px, just under both. Do not raise it
+   * without re-measuring the cycler — line 2 fits comfortably and will not
+   * warn you, the adjective is what overflows, and it only overflows on the
+   * few frames that word is up.
+   */
+  .headline {
+    font-size: clamp(48px, 16.8vw, 96px);
+  }
+
+  /*
+   * The block stays ONE block — the ~300px of empty gradient between headline
+   * and subhead that this file used to warn about is not coming back. The CTA
+   * gets a slightly longer leash than the desktop 24-34px because at 63px
+   * display size the old gap read as cramped against it, not because there is
+   * height to burn.
+   */
+  .action {
+    margin-top: clamp(32px, 5vh, 48px);
   }
 }

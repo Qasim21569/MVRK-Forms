@@ -1,8 +1,18 @@
 /*
- * Effect 5 of the page's five: the nav shrinks once you are past the hero.
- * Height and padding only — no colour animation, no logo scale, no blur
- * fade-in. It is the cheapest possible signal that you have left the top of
- * the page, and it is the one piece of chrome that is allowed to change.
+ * THE WASH IS ALWAYS ON, including over the hero.
+ *
+ * The nav used to sit transparent on the hero and pick up the cream wash and
+ * hairline only once you were past the fold. That gave the page two different
+ * headers, and on a phone the swap is the thing you notice: the hero's tint is
+ * close enough to cream that the transition reads as a flicker rather than as
+ * a state change, and the lockup loses its ground mid-scroll.
+ *
+ * One header, one treatment, top to bottom. The logo always has cream behind
+ * it and the bar always has an edge.
+ *
+ * What still changes past the fold is HEIGHT and nothing else — 76px to 60px.
+ * That is effect 5, and with the colour animation gone it is now literally the
+ * cheapest possible signal that you have left the top of the page.
  */
 .nav {
   position: fixed;
@@ -11,21 +21,16 @@
   height: var(--nav-h);
   display: flex;
   align-items: center;
-  background: transparent;
-  border-bottom: 1px solid transparent;
-  transition:
-    height var(--dur-enter) var(--ease),
-    background-color var(--dur-enter) var(--ease),
-    border-color var(--dur-enter) var(--ease);
+  background: rgba(246, 240, 230, 0.9);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: saturate(1.35) blur(12px);
+  -webkit-backdrop-filter: saturate(1.35) blur(12px);
+  transition: height var(--dur-enter) var(--ease);
 }
 
 .lifted {
   /* From 76px to 60px. */
   height: 60px;
-  background: rgba(246, 240, 230, 0.9);
-  border-bottom-color: var(--line);
-  backdrop-filter: saturate(1.35) blur(12px);
-  -webkit-backdrop-filter: saturate(1.35) blur(12px);
 }
 
 .inner {

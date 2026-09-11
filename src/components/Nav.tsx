@@ -10,10 +10,11 @@ import styles from "./Nav.module.css";
  * Band 0. Logo left, one button right, nothing else — there is nowhere else
  * to go, so there are no nav links.
  *
- * Transparent over the hero, then it shrinks and picks up a cream wash and a
- * hairline once you are past the fold, so the lockup never sits on top of
- * running copy. That is effect 5 of the page's five, and it is a state change
- * rather than a loop: the word cycler stays the only thing that runs forever.
+ * The cream wash and hairline are permanent — see Nav.module.css for why the
+ * transparent-over-hero state was dropped. The only thing `lifted` changes is
+ * height, 76px to 60px, once you are past the fold. That is effect 5 of the
+ * page's five, and it is a state change rather than a loop: the word cycler
+ * stays the only thing that runs forever.
  */
 export default function Nav() {
   const [lifted, setLifted] = useState(false);
