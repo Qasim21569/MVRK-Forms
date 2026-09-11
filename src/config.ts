@@ -142,15 +142,14 @@ export const demo = {
    * The cue that sits in the gap between the hero and the video, telling you
    * the thing below is a video of the product rather than another graphic.
    *
-   * From Vuk, Telegram, 11/09/26, asked for and answered specifically for this
-   * space. TRANSCRIBED EXACTLY, INCLUDING "Were" — that is his, not a typo
-   * introduced here, and rule 1 says copy is law and never gets polished. If
-   * he wants the apostrophe it changes on this line and nowhere else.
+   * From Vuk, Telegram, 11/09/26. Originally transcribed as "Were" — his
+   * typo, not one introduced here — and corrected to "We're" on his own
+   * follow-up instruction.
    *
    * The arrow under it is not copy. He was asked about it in the same thread
    * and said "Sure make it how you like", so it is a drawn glyph, not a string.
    */
-  cue: "Take A Peek At What Were Building",
+  cue: "Take A Peek At What We're Building",
   /** YouTube video id. Null falls back to the designed placeholder state. */
   youtubeId: "Y7ZDRdq3ZuE" as string | null,
   /** 1280x720, from the video's own maxres thumbnail, re-encoded. */
@@ -364,10 +363,9 @@ export const waitlist = {
   consent:
     "Yes, notify me via email when the trial is available. I agree to the " +
     "Privacy Policy and consent to receive future emails from MVRK.",
-  /** TODO: last sentence still references "the book". Confirm with Vuk. */
   note:
-    "Note: I hate spam as much as you do. I will only email when I have " +
-    "something important to share.",
+    "Note: We hate spam as much as you do. We will only email you when we " +
+    "have something important to share.",
   submit: "Email Me When Available",
   privacyHref: "https://www.mvrk.ca/privacy-policy",
   /** Rendered inside the consent line as a link. */
