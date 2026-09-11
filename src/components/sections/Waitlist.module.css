@@ -180,8 +180,9 @@
 }
 
 @media (hover: hover) {
+  /* Lift and shadow only — the rose does not darken. Same answer to the
+     pointer as CtaButton, which is the other button on the page. */
   .submit:not(:disabled):hover {
-    background: var(--rose-cta-deep);
     transform: translateY(-1px);
     box-shadow:
       0 3px 7px rgba(129, 77, 113, 0.18),

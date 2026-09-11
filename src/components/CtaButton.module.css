@@ -6,11 +6,13 @@
  * unmistakably the same pink. The six brand hexes are untouched — --rose
  * itself carries the hero card's dot and the logo artwork.
  *
- * THE HOVER, effect 4 of the page's five: a --plum fill rises from below over
- * DUR_MICRO and a duplicate label rises with it. Two transforms and no colour
- * transition, so it is cheap, and it lands hard on the out-curve rather than
- * cross-fading, which is what makes it read as built rather than as a
- * default. The pill is the one radius exception on the page.
+ * THE HOVER DOES NOT CHANGE THE COLOUR. It was a --plum panel rising over the
+ * rose, which repainted the button on every hover; see CtaButton.tsx for why
+ * that and its duplicate label both went. What is left is a 1px lift and a
+ * deeper shadow — the same treatment the waitlist submit uses, so every button
+ * on the page now answers the pointer the same way.
+ *
+ * The pill is the one radius exception on the page.
  */
 
 .cta {
@@ -27,10 +29,19 @@
   letter-spacing: -0.005em;
   cursor: pointer;
   white-space: nowrap;
-  overflow: hidden;
-  box-shadow: var(--shadow-cta);
   /* 44px minimum tap target, both variants. */
   min-height: 44px;
+
+  /*
+   * The ring is its own layer so the ink-ground hairline below and the hover
+   * shadow can coexist. Without it, whichever box-shadow is declared last
+   * wins and the hairline disappears the moment you hover the footer CTA.
+   */
+  --cta-ring: 0 0 #0000;
+  box-shadow: var(--cta-ring), var(--shadow-cta);
+  transition:
+    transform var(--dur-micro) var(--ease),
+    box-shadow var(--dur-micro) var(--ease);
 }
 
 .nav {
@@ -44,48 +55,19 @@
   min-height: 52px;
 }
 
-.fill {
-  position: absolute;
-  inset: 0;
-  background: var(--plum);
-  translate: 0 101%;
-  transition: translate var(--dur-micro) var(--ease);
-}
-
-.label,
-.fillLabel {
-  position: relative;
-  display: block;
-  transition: translate var(--dur-micro) var(--ease);
-}
-
-/* The duplicate waits one line below, exactly where the real label sits. */
-.fillLabel {
-  position: absolute;
-  translate: 0 120%;
-}
-
 @media (hover: hover) {
-  .cta:hover .fill {
-    translate: 0 0;
-  }
-  .cta:hover .label {
-    translate: 0 -120%;
-  }
-  .cta:hover .fillLabel {
-    translate: 0 0;
+  .cta:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--cta-ring), 0 3px 7px rgba(129, 77, 113, 0.18),
+      0 16px 34px rgba(129, 77, 113, 0.22);
   }
 }
 
-/* Keyboard gets the same feedback as the pointer. */
-.cta:focus-visible .fill {
-  translate: 0 0;
-}
-.cta:focus-visible .label {
-  translate: 0 -120%;
-}
-.cta:focus-visible .fillLabel {
-  translate: 0 0;
+/* Keyboard gets the same feedback as the pointer, on top of the focus ring. */
+.cta:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: var(--cta-ring), 0 3px 7px rgba(129, 77, 113, 0.18),
+    0 16px 34px rgba(129, 77, 113, 0.22);
 }
 
 /*
@@ -94,23 +76,17 @@
  * gives it an edge without introducing a colour that is not already here.
  */
 [data-tone="ink"] .cta {
-  box-shadow: 0 0 0 1px rgba(246, 240, 230, 0.28);
+  --cta-ring: 0 0 0 1px rgba(246, 240, 230, 0.28);
 }
 
-/*
- * Reduced motion: no rise. The fill is not the affordance, the colour change
- * is, so it swaps instantly instead of sliding.
- */
+/* No lift under reduced motion. The button still answers, it just does not move. */
 @media (prefers-reduced-motion: reduce) {
-  .cta:hover {
-    background: var(--plum);
+  .cta {
+    transition: none;
   }
-  .cta:hover .fill,
-  .cta:hover .label,
-  .cta:hover .fillLabel {
-    translate: 0 0;
-  }
-  .cta:hover .fillLabel {
-    display: none;
+
+  .cta:hover,
+  .cta:focus-visible {
+    transform: none;
   }
 }

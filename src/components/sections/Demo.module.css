@@ -89,9 +89,8 @@
   box-shadow:
     0 0 0 1px var(--line),
     0 10px 30px rgba(30, 38, 48, 0.22);
-  transition:
-    background-color var(--dur-micro) var(--ease),
-    scale var(--dur-micro) var(--ease);
+  /* Only scale moves now that the hover no longer repaints the circle. */
+  transition: scale var(--dur-micro) var(--ease);
 }
 
 .playGlyph {
@@ -101,7 +100,6 @@
   margin-left: 3px;
   fill: var(--plum);
   stroke: none;
-  transition: fill var(--dur-micro) var(--ease);
 }
 
 @media (hover: hover) {
@@ -109,12 +107,10 @@
     filter: saturate(1);
     scale: 1.012;
   }
+  /* Scale only. The play circle used to invert to plum-on-paper on hover;
+     no button on the page changes colour under the pointer now. */
   .facade:hover .playButton {
-    background: var(--plum);
     scale: 1.05;
-  }
-  .facade:hover .playGlyph {
-    fill: var(--paper);
   }
 }
 

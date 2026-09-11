@@ -13,11 +13,23 @@ import styles from "./CtaButton.module.css";
  * window.scrollTo: Lenis keeps animating toward its own target and drags the
  * page straight back.
  *
- * `.fillLabel` is the label a second time, sitting inside the rising fill.
- * That is how the hover works without animating a colour: one label rides up
- * and out, its duplicate rides up into place behind it, and the two are
- * always in the same position so nothing jumps. `aria-hidden` on the copy so
- * the button has one accessible name, not two.
+ * ---------------------------------------------------------------------------
+ * THE RISING PLUM FILL AND ITS DUPLICATE LABEL ARE GONE. They were two bugs
+ * wearing one effect.
+ *
+ * The fill was a --plum panel that slid up over the rose on hover, so the
+ * button changed colour — which is the thing that was not wanted.
+ *
+ * The duplicate label was parked at `translate: 0 120%`, and 120% is of the
+ * LABEL's own height, not the button's. At 17px/1.55 the label box is ~26px
+ * and the page button is 52px tall, so the copy waited 31px down inside a
+ * 52px box and about 8px of it sat visible below the real label. That is the
+ * clipped second "Coming Soon" under every button. `overflow: hidden` could
+ * not save it because the duplicate never left the button's own box.
+ *
+ * The button is now one label on one colour, and hover is a lift rather than
+ * a repaint.
+ * ---------------------------------------------------------------------------
  */
 export default function CtaButton({
   variant,
@@ -35,11 +47,7 @@ export default function CtaButton({
       // Clear the fixed nav so the form's first field is not tucked under it.
       onClick={() => scrollToId(WAITLIST_ID, 96)}
     >
-      <span className={styles.fill} aria-hidden="true" />
-      <span className={styles.label}>{label}</span>
-      <span className={styles.fillLabel} aria-hidden="true">
-        {label}
-      </span>
+      {label}
     </button>
   );
 }
