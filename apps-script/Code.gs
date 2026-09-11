@@ -76,8 +76,22 @@ const HEADERS = [
  * not, so a repeat address is skipped rather than written twice. The caller
  * still gets {ok:true} — from the visitor's side signing up twice succeeded.
  * Set false to record every submission including repeats.
+ *
+ * WORTH KNOWING WHILE TESTING: a repeat address is skipped BEFORE the row and
+ * BEFORE the email, so re-testing with the same address produces neither. If a
+ * test looks like it did nothing at all, try a fresh address first.
  */
 const BLOCK_DUPLICATE_EMAILS = true;
+
+/**
+ * Diagnostics token. Hitting the /exec URL with ?diag=<this value> reports
+ * WHICH spreadsheet and tab this deployment is actually writing to.
+ *
+ * Behind a token because the endpoint is public: the sheet is still
+ * permission-protected, but its name and id are not worth handing to anyone
+ * who finds the URL. Set to "" to disable the diagnostic entirely.
+ */
+const DIAG_TOKEN = "mvrk-diag-7f3a91";
 
 /* ------------------------------------------------------------------ */
 /* Entry points                                                        */
@@ -90,7 +104,44 @@ const BLOCK_DUPLICATE_EMAILS = true;
  * This is the check that catches the Workspace "Who has access" mis-click,
  * which 403s here before any of this code runs.
  */
-function doGet() {
+function doGet(e) {
+  /*
+   * ?diag=<DIAG_TOKEN> answers the only question that matters when rows seem
+   * to be missing: WHICH spreadsheet is this deployment bound to, and what is
+   * actually in it.
+   *
+   * It exists because "the email arrived but the sheet is empty" is always the
+   * same misunderstanding — the row was written, just somewhere the person
+   * looking was not. Rather than reason about it, ask the deployment.
+   */
+  const token = e && e.parameter ? e.parameter.diag : null;
+  if (token && DIAG_TOKEN && token === DIAG_TOKEN) {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (!ss) {
+      return _json({
+        ok: false,
+        error:
+          "No bound spreadsheet. This script is standalone, not attached to a " +
+          "Sheet — it cannot write rows. Recreate it via the Sheet's " +
+          "Extensions > Apps Script.",
+      });
+    }
+    const tabs = ss.getSheets().map(function (s) {
+      return {
+        name: s.getName(),
+        rows: Math.max(0, s.getLastRow() - 1),
+        isTheTargetTab: s.getName() === SHEET_NAME,
+      };
+    });
+    return _json({
+      ok: true,
+      writingTo: { spreadsheet: ss.getName(), id: ss.getId(), tab: SHEET_NAME },
+      tabsInThisSpreadsheet: tabs,
+      notifyEmail: NOTIFY_EMAIL,
+      duplicateBlocking: BLOCK_DUPLICATE_EMAILS,
+    });
+  }
+
   return _json({ ok: true, message: "MVRK Forms waitlist endpoint is ready." });
 }
 
@@ -207,7 +258,17 @@ function _sheet() {
 }
 
 function _appendToSheet(row) {
-  _sheet().appendRow(row);
+  const sheet = _sheet();
+  sheet.appendRow(row);
+  /*
+   * Logged so the Executions tab answers "where did that row go" without
+   * anyone having to reason about it. Shows up under
+   * Apps Script editor > Executions > the doPost run.
+   */
+  console.log(
+    'Appended row ' + sheet.getLastRow() + ' to tab "' + sheet.getName() +
+      '" in spreadsheet "' + SpreadsheetApp.getActiveSpreadsheet().getName() + '"'
+  );
 }
 
 /** Case-insensitive scan of the Email column. */
